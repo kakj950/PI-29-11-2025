@@ -44,19 +44,17 @@ jobs:
       - name: 📁 Create minimal templates directory
         run: |
           mkdir -p templates
-          cat > templates/tasks_list.html << 'EOF'
-<!DOCTYPE html>
-<html>
-<body>
-    <h1>Tasks ({{ stats.total }} total)</h1>
-    <ul>
-    {% for task in tasks %}
-        <li>{{ task.title }} ({{ task.completed_at }})</li>
-    {% endfor %}
-    </ul>
-</body>
-</html>
-EOF
+          echo '<!DOCTYPE html>' > templates/tasks_list.html
+          echo '<html>' >> templates/tasks_list.html
+          echo '<body>' >> templates/tasks_list.html
+          echo '    <h1>Tasks ({{ stats.total }} total)</h1>' >> templates/tasks_list.html
+          echo '    <ul>' >> templates/tasks_list.html
+          echo '    {% for task in tasks %}' >> templates/tasks_list.html
+          echo '        <li>{{ task.title }} ({{ task.completed_at }})</li>' >> templates/tasks_list.html
+          echo '    {% endfor %}' >> templates/tasks_list.html
+          echo '    </ul>' >> templates/tasks_list.html
+          echo '</body>' >> templates/tasks_list.html
+          echo '</html>' >> templates/tasks_list.html
 
       - name: 📁 Ensure app.py exists
         run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
