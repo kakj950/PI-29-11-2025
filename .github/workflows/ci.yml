@@ -60,7 +60,17 @@ jobs:
         run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
 
       - name: 🧪 Run tests
-        run: python -c "import sys; sys.path.insert(0, '.'); from app import app; app.config['TESTING'] = True; client = app.test_client(); rv = client.get('/'); assert rv.status_code == 200, f'Expected 200, got {rv.status_code}'; print('✅ GET / -> 200 OK')"
+        run: |
+          python -c "
+            import sys
+            sys.path.insert(0, '.')
+            from app import app
+            app.config['TESTING'] = True
+            client = app.test_client()
+            rv = client.get('/')
+            assert rv.status_code == 200, 'GET / failed'
+            print('✅ GET / -> 200 OK')
+          "
 
       - name: 🎯 Success
         if: success()
