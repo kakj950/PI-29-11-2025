@@ -1,3 +1,4 @@
+---
 name: CI
 
 on:
@@ -26,10 +27,8 @@ jobs:
 
       - name: 🗃️ Prepare database
         run: |
-          # Создаём структуру каталогов и БД в нужном месте
           mkdir -p ../..
-          # Создаём файл Base.md как SQLite-базу (да, расширение .md — но это нормально для SQLite)
-          sqlite3 ../../Base.md <<SQL
+          sqlite3 ../../Base.md << 'SQL'
           CREATE TABLE IF NOT EXISTS tasks (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               title TEXT NOT NULL,
@@ -45,26 +44,25 @@ jobs:
       - name: 📁 Create minimal templates directory
         run: |
           mkdir -p templates
-          cat > templates/tasks_list.html <<'EOF'
-          <!DOCTYPE html>
-          <html>
-          <body>
-              <h1>Tasks ({{ stats.total }} total)</h1>
-              <ul>
-              {% for task in tasks %}
-                  <li>{{ task.title }} ({{ task.completed_at }})</li>
-              {% endfor %}
-              </ul>
-          </body>
-          </html>
-          EOF
+          cat > templates/tasks_list.html << 'EOF'
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Tasks ({{ stats.total }} total)</h1>
+    <ul>
+    {% for task in tasks %}
+        <li>{{ task.title }} ({{ task.completed_at }})</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
+EOF
 
       - name: 📁 Ensure app.py exists
         run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
 
       - name: 🧪 Run tests
         run: |
-          # Запускаем простую проверку: может ли приложение стартовать и отдать /
           python -c "
 import sys
 sys.path.insert(0, '.')
