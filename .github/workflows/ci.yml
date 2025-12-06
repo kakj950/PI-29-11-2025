@@ -44,7 +44,7 @@ jobs:
       - name: 📁 Create minimal templates directory
         run: |
           mkdir -p templates
-          cat > templates/tasks_list.html << 'EOF'
+          cat > templates/tasks_list.html <<
 <html>
 <body>
     <h1>Tasks ({{ stats.total }} total)</h1>
@@ -55,7 +55,7 @@ jobs:
     </ul>
 </body>
 </html>
-EOF
+
 
       - name: 📁 Ensure app.py exists
         run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
