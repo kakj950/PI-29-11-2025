@@ -1,3 +1,43 @@
-- name: 🧪 Run tests
-  run: |
-    pytest --tb=short -v
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install flake8 black isort pytest
+
+      - name: Run linters
+        run: |
+          black . --check --diff
+          isort . --check --diff
+          flake8 .
+
+      - name: Run tests
+        run: |
+          pytest --tb=short -v
+
+      - name: Summary
+        if: always()
+        run: echo "✅ CI job completed for Python ${{ matrix.python-version }}"
