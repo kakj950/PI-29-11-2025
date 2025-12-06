@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503
+# E203: whitespace before ':'
+# W503: line break before binary operator (black использует line break after)
+select = B,C,E,F,W,T4,B9
+# B - bugbear, C - complexity, E - errors, F - flake8, W - warnings, T4 - flake8-tidy-imports, B9 - flake8-bugbear
+exclude = .git,__pycache__,venv,docs,scripts

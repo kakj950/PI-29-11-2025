@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Список задач{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2>Задачи</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <form method="GET" class="d-inline">
+            <select name="filter" onchange="this.form.submit()" class="form-select d-inline w-auto">
+                <option value="all" {% if filter == 'all' %}selected{% endif %}>Все</option>
+                <option value="active" {% if filter == 'active' %}selected{% endif %}>Активные</option>
+                <option value="completed" {% if filter == 'completed' %}selected{% endif %}>Выполненные</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Всего</h5>
+                <p class="card-text">{{ stats.total }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Выполнено</h5>
+                <p class="card-text">{{ stats.completed }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Активно</h5>
+                <p class="card-text">{{ stats.active }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Форма добавления задачи -->
+<div class="card mb-4">
+    <div class="card-header">Добавить новую задачу</div>
+    <div class="card-body">
+        <form method="POST" action="/tasks">
+            <div class="mb-3">
+                <label for="title" class="form-label">Название</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="deadline" class="form-label">Срок</label>
+                <input type="text" class="form-control" id="deadline" name="deadline" required>
+            </div>
+            <div class="mb-3">
+                <label for="priority" class="form-label">Приоритет</label>
+                <select class="form-select" id="priority" name="priority" required>
+                    <option value="Высокий">Высокий</option>
+                    <option value="Средне-высокий">Средне-высокий</option>
+                    <option value="Средний">Средний</option>
+                    <option value="Низкий">Низкий</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Категория</label>
+                <input type="text" class="form-control" id="category" name="category" required>
+            </div>
+            <div class="mb-3">
+                <label for="user_id" class="form-label">ID пользователя</label>
+                <input type="text" class="form-control" id="user_id" name="user_id" required>
+            </div>
+            <div class="mb-3">
+                <label for="completed_at" class="form-label">Дата выполнения</label>
+                <input type="text" class="form-control" id="completed_at" name="completed_at" required>
+            </div>
+            <div class="mb-3">
+                <label for="reminder_time" class="form-label">Напоминание</label>
+                <input type="text" class="form-control" id="reminder_time" name="reminder_time" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить задачу</button>
+        </form>
+    </div>
+</div>
+
+<!-- Список задач -->
+<div class="row g-3">
+    {% for task in tasks %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 {% if task.completed_at != 'Постоянно' and task.completed_at != '' %}task-completed{% endif %} 
+                    {% if task.priority == 'Высокий' %}priority-high{% elif task.priority == 'Средний' or task.priority == 'Средне-высокий' %}priority-medium{% else %}priority-low{% endif %}">
+            <div class="card-body">
+                <h5 class="card-title">{{ task.title }}</h5>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Срок: {{ task.deadline }}<br>
+                        Категория: {{ task.category }}<br>
+                        Приоритет: {{ task.priority }}
+                    </small>
+                </p>
+                <div class="d-flex justify-content-between">
+                    <form method="POST" action="/tasks/{{ task.id }}/toggle" style="display:inline;">
+                        <button type="submit" class="btn btn-sm {% if task.completed_at != 'Постоянно' and task.completed_at != '' %}btn-outline-success{% else %}btn-success{% endif %}">
+                            {% if task.completed_at != 'Постоянно' and task.completed_at != '' %}Не выполнено{% else %}Выполнено{% endif %}
+                        </button>
+                    </form>
+                    <form method="POST" action="/tasks/{{ task.id }}/delete" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить задачу?')">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if not tasks %}
+<div class="alert alert-info mt-4">Задач пока нет.</div>
+{% endif %}
+
+{% endblock %}

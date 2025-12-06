@@ -1,0 +1,18 @@
+[tool.black]
+line-length = 88
+target-version = ['py3.13.7']  # Укажите версию Python, которую вы используете (например, py39, py310)
+include = '\.py$'
+exclude = '''
+/(
+    \.git
+  | __pycache__
+  | venv
+  | docs
+  | scripts
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = ["venv", ".git", "__pycache__", "docs", "scripts"]
