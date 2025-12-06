@@ -10,21 +10,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: 🛎️ Checkout code
         uses: actions/checkout@v4
-
       - name: 🐍 Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-
       - name: 📦 Install dependencies
         run: |
           pip install --upgrade pip
           pip install flask pytest
-
       - name: 🗃️ Prepare database
         run: |
           mkdir -p ../..
@@ -40,7 +36,6 @@ jobs:
               reminder_time TEXT
           );
           SQL
-
       - name: 📁 Create minimal templates directory
       run: |
           mkdir -p templates
@@ -57,7 +52,6 @@ jobs:
 </body>
 </html>
 EOF
-
 
       - name: 📁 Ensure app.py exists
         run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
