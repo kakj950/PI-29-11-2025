@@ -45,7 +45,6 @@ jobs:
         run: |
           mkdir -p templates
           cat > templates/tasks_list.html << 'EOF'
-<!DOCTYPE html>
 <html>
 <body>
     <h1>Tasks ({{ stats.total }} total)</h1>
