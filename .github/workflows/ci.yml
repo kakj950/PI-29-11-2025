@@ -74,4 +74,4 @@ jobs:
 
       - name: 🎯 Success
         if: success()
-        run: echo "🎉 CI passed: app starts and serves /"
+        run: echo "CI passed: app starts and serves /"
