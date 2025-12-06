@@ -12,20 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🛎️ Checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python 3.10
+      - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: 📦 Install dependencies
+      - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install flask pytest
 
-      - name: 🗃️ Prepare database
+      - name: Prepare database
         run: |
           mkdir -p ../..
           sqlite3 ../../Base.md << 'SQL'
@@ -41,37 +41,27 @@ jobs:
           );
           SQL
 
-      - name: 📁 Create minimal templates directory
+      - name: Create templates directory
         run: |
           mkdir -p templates
           echo '<!DOCTYPE html>' > templates/tasks_list.html
           echo '<html>' >> templates/tasks_list.html
           echo '<body>' >> templates/tasks_list.html
-          echo '    <h1>Tasks ({{ stats.total }} total)</h1>' >> templates/tasks_list.html
+          echo '    <h1>Tasks</h1>' >> templates/tasks_list.html
           echo '    <ul>' >> templates/tasks_list.html
           echo '    {% for task in tasks %}' >> templates/tasks_list.html
-          echo '        <li>{{ task.title }} ({{ task.completed_at }})</li>' >> templates/tasks_list.html
+          echo '        <li>{{ task.title }}</li>' >> templates/tasks_list.html
           echo '    {% endfor %}' >> templates/tasks_list.html
           echo '    </ul>' >> templates/tasks_list.html
           echo '</body>' >> templates/tasks_list.html
           echo '</html>' >> templates/tasks_list.html
 
-      - name: 📁 Ensure app.py exists
-        run: test -f app.py || { echo "❌ File app.py not found in root!"; exit 1; }
+      - name: Check app.py exists
+        run: test -f app.py || { echo "File app.py not found"; exit 1; }
 
-      - name: 🧪 Run tests
-        run: |
-          python -c "
-            import sys
-            sys.path.insert(0, '.')
-            from app import app
-            app.config['TESTING'] = True
-            client = app.test_client()
-            rv = client.get('/')
-            assert rv.status_code == 200, 'GET / failed'
-            print('✅ GET / -> 200 OK')
-          "
+      - name: Run basic test
+        run: python -c "import sys; sys.path.insert(0, '.'); from app import app; app.config['TESTING'] = True; client = app.test_client(); rv = client.get('/'); assert rv.status_code == 200, 'GET / failed'; print('GET / -> 200 OK')"
 
-      - name: 🎯 Success
+      - name: Final success message
         if: success()
-        run: echo "CI passed: app starts and serves /"
+        run: echo "CI passed"
